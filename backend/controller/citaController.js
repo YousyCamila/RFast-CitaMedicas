@@ -1,4 +1,4 @@
-const Cita = require('../models/cita');
+const Cita = require('../models/citaModels');
 
 // Crear una nueva cita
 exports.createCita = async (req, res) => {
