@@ -11,5 +11,14 @@
     "url": "(https://github.com/YousyCamila/RFast-CitasMedicas,git)"
   },
   "author": "Danna Camila Guerra",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "express-validator": "^7.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
 }
