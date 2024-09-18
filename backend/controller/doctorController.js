@@ -1,68 +1,98 @@
-const Doctor = require('../models/doctorModels');
+const logic = require('../logic/doctores_logic'); // Asegúrate de que la ruta sea correcta
+const { doctorSchemaValidation } = require('../validaciones/doctor_validations'); // Suponiendo que tienes un esquema de validación
 
-// Crear un nuevo doctor
-exports.createDoctor = async (req, res) => {
-  try {
-    const doctor = new Doctor(req.body);
-    await doctor.save();
-    res.status(201).json(doctor);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
-
-// Obtener todos los doctores
-exports.getDoctors = async (req, res) => {
-  try {
-    const doctors = await Doctor.find();
-    res.json(doctors);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// Obtener un doctor por email
-exports.getDoctorByEmail = async (req, res) => {
-  try {
-    const doctor = await Doctor.findOne({ email: req.params.email });
-    if (doctor) {
-      res.json(doctor);
-    } else {
-      res.status(404).json({ message: 'Doctor no encontrado' });
+// Controlador para listar todos los doctores
+const listarDoctores = async (req, res) => {
+    try {
+        const doctores = await logic.obtenerDoctores();
+        if (doctores.length === 0) {
+            return res.status(204).send(); // 204 No Content
+        }
+        res.json(doctores);
+    } catch (err) {
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
 };
 
-// Actualizar un doctor por email
-exports.updateDoctor = async (req, res) => {
-  try {
-    const doctor = await Doctor.findOneAndUpdate(
-      { email: req.params.email },
-      req.body,
-      { new: true }
-    );
-    if (doctor) {
-      res.json(doctor);
-    } else {
-      res.status(404).json({ message: 'Doctor no encontrado' });
+// Controlador para crear un nuevo doctor
+const crearDoctor = async (req, res) => {
+    const body = req.body;
+    const { error, value } = doctorSchemaValidation.validate({
+        nombre: body.nombre,
+        email: body.email,
+        especialidad: body.especialidad,
+        telefono: body.telefono,
+        direccion: body.direccion,
+        estado: body.estado,
+    });
+
+    if (error) {
+        return res.status(400).json({ error: error.details[0].message });
     }
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
+
+    try {
+        const nuevoDoctor = await logic.crearDoctor(value);
+        res.status(201).json(nuevoDoctor);
+    } catch (err) {
+        if (err.message === 'El doctor ya existe con ese email.') {
+            return res.status(409).json({ error: err.message });
+        }
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
 };
 
-// Eliminar un doctor por email
-exports.deleteDoctor = async (req, res) => {
-  try {
-    const doctor = await Doctor.findOneAndDelete({ email: req.params.email });
-    if (doctor) {
-      res.json({ message: 'Doctor eliminado' });
-    } else {
-      res.status(404).json({ message: 'Doctor no encontrado' });
+// Controlador para obtener un doctor por email
+const obtenerDoctorPorEmail = async (req, res) => {
+    const { email } = req.params;
+    try {
+        const doctor = await logic.obtenerDoctorPorEmail(email);
+        res.json(doctor);
+    } catch (err) {
+        res.status(404).json({ error: err.message });
     }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+};
+
+// Controlador para actualizar un doctor por email
+const actualizarDoctor = async (req, res) => {
+    const { email } = req.params;
+    const body = req.body;
+    const { error, value } = doctorSchemaValidation.validate({
+        nombre: body.nombre,
+        email: body.email,
+        especialidad: body.especialidad,
+        telefono: body.telefono,
+        direccion: body.direccion,
+        estado: body.estado,
+    });
+
+    if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+    }
+
+    try {
+        const doctorActualizado = await logic.actualizarDoctor(email, value);
+        res.json(doctorActualizado);
+    } catch (err) {
+        res.status(404).json({ error: err.message });
+    }
+};
+
+// Controlador para eliminar un doctor por email
+const eliminarDoctor = async (req, res) => {
+    const { email } = req.params;
+    try {
+        const result = await logic.eliminarDoctor(email);
+        res.json(result);
+    } catch (err) {
+        res.status(404).json({ error: err.message });
+    }
+};
+
+// Exportar los controladores
+module.exports = {
+    listarDoctores,
+    crearDoctor,
+    obtenerDoctorPorEmail,
+    actualizarDoctor,
+    eliminarDoctor,
 };

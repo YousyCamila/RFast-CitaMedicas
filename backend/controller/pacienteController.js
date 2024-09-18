@@ -1,68 +1,105 @@
-const Paciente = require('../models/pacienteModels');
+const pacienteLogic = require('../logic/pacienteLogic');
+const { pacienteSchemaValidation } = require('../validaciones/paciente_validations');
 
-// Crear un nuevo paciente
-exports.createPaciente = async (req, res) => {
+// Controlador para listar todos los pacientes
+const listarPacientes = async (req, res) => {
   try {
-    const paciente = new Paciente(req.body);
-    await paciente.save();
-    res.status(201).json(paciente);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
-
-// Obtener todos los pacientes
-exports.getPacientes = async (req, res) => {
-  try {
-    const pacientes = await Paciente.find();
+    const pacientes = await pacienteLogic.obtenerPacientes();
+    if (pacientes.length === 0) {
+      return res.status(204).send(); // 204 No Content
+    }
     res.json(pacientes);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+  } catch (err) {
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
-// Obtener un paciente por email
-exports.getPacienteByEmail = async (req, res) => {
+// Controlador para crear un nuevo paciente
+const crearPaciente = async (req, res) => {
+  const body = req.body;
+  const { error, value } = pacienteSchemaValidation.validate({
+    nombre: body.nombre,
+    fechaNacimiento: body.fechaNacimiento,
+    teléfono: body.telefono,
+    email: body.email,
+    dirección: body.direccion,
+  });
+
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   try {
-    const paciente = await Paciente.findOne({ email: req.params.email });
-    if (paciente) {
-      res.json(paciente);
-    } else {
-      res.status(404).json({ message: 'Paciente no encontrado' });
+    const nuevoPaciente = await pacienteLogic.crearPaciente(value);
+    res.status(201).json(nuevoPaciente);
+  } catch (err) {
+    if (err.message === 'El paciente ya existe con ese email.') {
+      return res.status(409).json({ error: err.message });
     }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
-// Actualizar un paciente por email
-exports.updatePaciente = async (req, res) => {
+// Controlador para obtener un paciente por email
+const obtenerPacientePorEmail = async (req, res) => {
+  const { email } = req.params;
   try {
-    const paciente = await Paciente.findOneAndUpdate(
-      { email: req.params.email },
-      req.body,
-      { new: true }
-    );
-    if (paciente) {
-      res.json(paciente);
-    } else {
-      res.status(404).json({ message: 'Paciente no encontrado' });
+    const paciente = await pacienteLogic.obtenerPacientePorEmail(email);
+    if (!paciente) {
+      return res.status(404).json({ error: 'Paciente no encontrado' });
     }
-  } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.json(paciente);
+  } catch (err) {
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
-// Eliminar un paciente por email
-exports.deletePaciente = async (req, res) => {
-  try {
-    const paciente = await Paciente.findOneAndDelete({ email: req.params.email });
-    if (paciente) {
-      res.json({ message: 'Paciente eliminado' });
-    } else {
-      res.status(404).json({ message: 'Paciente no encontrado' });
-    }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+// Controlador para actualizar un paciente por email
+const actualizarPaciente = async (req, res) => {
+  const { email } = req.params;
+  const body = req.body;
+  const { error, value } = pacienteSchemaValidation.validate({
+    nombre: body.nombre,
+    fechaNacimiento: body.fechaNacimiento,
+    teléfono: body.telefono,
+    email: body.email,
+    dirección: body.direccion,
+  });
+
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
   }
+
+  try {
+    const pacienteActualizado = await pacienteLogic.actualizarPaciente(email, value);
+    if (!pacienteActualizado) {
+      return res.status(404).json({ error: 'Paciente no encontrado' });
+    }
+    res.json(pacienteActualizado);
+  } catch (err) {
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+// Controlador para eliminar un paciente por email
+const eliminarPaciente = async (req, res) => {
+  const { email } = req.params;
+  try {
+    const resultado = await pacienteLogic.eliminarPaciente(email);
+    if (!resultado) {
+      return res.status(404).json({ error: 'Paciente no encontrado' });
+    }
+    res.json({ message: 'Paciente eliminado exitosamente' });
+  } catch (err) {
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+// Exportar los controladores
+module.exports = {
+  listarPacientes,
+  crearPaciente,
+  obtenerPacientePorEmail,
+  actualizarPaciente,
+  eliminarPaciente,
 };
