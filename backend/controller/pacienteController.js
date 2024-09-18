@@ -1,5 +1,5 @@
 const pacienteLogic = require('../logic/pacienteLogic');
-const { pacienteSchemaValidation } = require('../validaciones/paciente_validations');
+const { pacienteSchemaValidation } = require('../validations/pacienteValidations');
 
 // Controlador para listar todos los pacientes
 const listarPacientes = async (req, res) => {

@@ -1,5 +1,5 @@
-const logic = require('../logic/citas_logic'); // Asegúrate de que la ruta sea correcta
-const { citaSchemaValidation } = require('../validaciones/cita_validations'); // Suponiendo que tienes un esquema de validación
+const logic = require('../logic/citaLogic'); // Asegúrate de que la ruta sea correcta
+const { citaSchemaValidation } = require('../validations/citaValidations'); // Suponiendo que tienes un esquema de validación
 
 // Controlador para listar todas las citas
 const listarCitas = async (req, res) => {

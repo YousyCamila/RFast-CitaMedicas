@@ -3,10 +3,10 @@ const router = express.Router();
 const doctorsController = require('../controller/doctorController');
 
 // Rutas para doctores
-router.post('/', doctorsController.createDoctor);
-router.get('/', doctorsController.getDoctors);
-router.get('/:email', doctorsController.getDoctorByEmail);
-router.put('/:email', doctorsController.updateDoctor);
-router.delete('/:email', doctorsController.deleteDoctor);
+router.post('/', doctorsController.crearDoctor);
+router.get('/', doctorsController.listarDoctores);
+router.get('/:email', doctorsController.obtenerDoctorPorEmail);
+router.put('/:email', doctorsController.actualizarDoctor);
+router.delete('/:email', doctorsController.eliminarDoctor);
 
 module.exports = router;
