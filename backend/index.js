@@ -44,7 +44,7 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 // Configurar rutas de API
 app.use('/api/citas', citaRoutes);
-app.use('/api/doctors', doctorRoutes);
+app.use('/api/doctores', doctorRoutes);
 app.use('/api/pacientes', pacienteRoutes);
 
 // Puerto y servidor HTTPS

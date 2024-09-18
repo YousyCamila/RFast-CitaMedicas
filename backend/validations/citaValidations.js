@@ -22,23 +22,27 @@ const citaSchemaValidation = Joi.object({
     }),
 
   paciente: Joi.string()
-    .pattern(/^[0-9a-fA-F]{24}$/)
+    .min(3)
+    .max(50)
     .required()
     .messages({
-      'string.base': 'El ID del paciente debe ser un texto',
-      'string.empty': 'El ID del paciente no puede estar vacío',
-      'string.pattern.base': 'El ID del paciente debe ser un ObjectId válido de MongoDB (24 caracteres hexadecimales)',
-      'any.required': 'El ID del paciente es un campo requerido',
+      'string.base': 'El nombre del paciente debe ser un texto',
+      'string.empty': 'El nombre del paciente no puede estar vacío',
+      'string.min': 'El nombre del paciente debe tener al menos 3 caracteres',
+      'string.max': 'El nombre del paciente no debe exceder los 50 caracteres',
+      'any.required': 'El nombre del paciente es un campo requerido',
     }),
 
   doctor: Joi.string()
-    .pattern(/^[0-9a-fA-F]{24}$/)
+    .min(3)
+    .max(50)
     .required()
     .messages({
-      'string.base': 'El ID del doctor debe ser un texto',
-      'string.empty': 'El ID del doctor no puede estar vacío',
-      'string.pattern.base': 'El ID del doctor debe ser un ObjectId válido de MongoDB (24 caracteres hexadecimales)',
-      'any.required': 'El ID del doctor es un campo requerido',
+      'string.base': 'El nombre del doctor debe ser un texto',
+      'string.empty': 'El nombre del doctor no puede estar vacío',
+      'string.min': 'El nombre del doctor debe tener al menos 3 caracteres',
+      'string.max': 'El nombre del doctor no debe exceder los 50 caracteres',
+      'any.required': 'El nombre del doctor es un campo requerido',
     }),
 
   motivo: Joi.string()
