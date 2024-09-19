@@ -1,40 +1,35 @@
-.App {
-  text-align: center;
+.table {
+  margin-top: 20px; /* Espacio superior para la tabla */
+  width: 100%; /* Ancho completo */
+  border-collapse: collapse; /* Sin espacios entre celdas */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.table th, .table td {
+  padding: 12px; /* Espaciado interno */
+  text-align: left; /* Alineación izquierda */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.table thead {
+  background-color: #007bff; /* Color de fondo del encabezado */
+  color: white; /* Color del texto en el encabezado */
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.table tbody tr:nth-child(even) {
+  background-color: #f2f2f2; /* Color de fondo para filas pares */
 }
 
-.App-link {
-  color: #61dafb;
+.table tbody tr:hover {
+  background-color: #e9ecef; /* Color de fondo al pasar el mouse */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.btn {
+  transition: background-color 0.3s ease; /* Transición suave al cambiar color */
 }
 
+.btn-primary:hover {
+  background-color: #0056b3; /* Color más oscuro al pasar el mouse */
+}
 
+.btn-danger:hover {
+  background-color: #c82333; /* Color más oscuro al pasar el mouse */
+}
