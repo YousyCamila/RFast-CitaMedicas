@@ -5,6 +5,7 @@ import Registro from './components/register';
 import Home from './components/home';
 import Patients from './components/patients';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css'
 
 
 function App() {
