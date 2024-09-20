@@ -22,8 +22,7 @@ const crearDoctor = async (req, res) => {
         email: body.email,
         especialidad: body.especialidad,
         telefono: body.telefono,
-        direccion: body.direccion,
-        estado: body.estado,
+
     });
 
     if (error) {

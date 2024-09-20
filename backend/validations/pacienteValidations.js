@@ -25,14 +25,14 @@ const pacienteSchemaValidation = Joi.object({
       'any.required': 'La fecha de nacimiento es un campo requerido',
     }),
 
-  telefono: Joi.string()
+    telefono: Joi.string()
     .pattern(/^\d{7,15}$/)
-    .required()
+    .optional()
+    .allow('')
     .messages({
       'string.base': 'El teléfono debe ser un texto',
       'string.empty': 'El teléfono no puede estar vacío',
       'string.pattern.base': 'El teléfono debe tener entre 7 y 15 dígitos',
-      'any.required': 'El teléfono es un campo requerido',
     }),
 
   email: Joi.string()
@@ -45,17 +45,17 @@ const pacienteSchemaValidation = Joi.object({
       'any.required': 'El correo electrónico es un campo requerido',
     }),
 
-  direccion: Joi.string()
+    direccion: Joi.string()
     .min(5)
     .max(100)
-    .required()
+    .required() // Mantén esto si quieres que sea obligatorio
     .messages({
       'string.base': 'La dirección debe ser un texto',
       'string.empty': 'La dirección no puede estar vacía',
       'string.min': 'La dirección debe tener al menos 5 caracteres',
       'string.max': 'La dirección no debe exceder los 100 caracteres',
       'any.required': 'La dirección es un campo requerido',
-    }),
+    }),  
 });
 
 module.exports = { pacienteSchemaValidation };
