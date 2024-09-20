@@ -2,7 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv'); // Para manejar variables de entorno
+const authRoutes = require('./routes/authRoutes');
 dotenv.config(); // Carga las variables del archivo .env
+
 
 // Swagger
 const { swaggerUi, swaggerSpec } = require('./swagger/swagger'); // Swagger Spec
@@ -18,11 +20,12 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/medicalap
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
-.then(() => console.log('Conectado a MongoDB...'))
-.catch(err => console.error('No se pudo conectar con MongoDB:', err));
+    .then(() => console.log('Conectado a MongoDB...'))
+    .catch(err => console.error('No se pudo conectar con MongoDB:', err));
 
 // Inicializar la aplicación Express
 const app = express();
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -42,6 +45,7 @@ app.use('/api/citas', citaRoutes);
 app.use('/api/doctores', doctorRoutes);
 app.use('/api/pacientes', pacienteRoutes);
 
+app.use('/api/auth', authRoutes);
 
 const port = 3000; // Establece el puerto directamente en el código
 
