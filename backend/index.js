@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv'); // Para manejar variables de entorno
 const authRoutes = require('./routes/authRoutes');
+const connectDB = require('./config/db');
 dotenv.config(); // Carga las variables del archivo .env
 
 
@@ -16,12 +17,9 @@ const doctorRoutes = require('./routes/doctorRoutes');
 const pacienteRoutes = require('./routes/pacienteRoutes');
 
 // Conectar a MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/medicalappointmentsdb', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-    .then(() => console.log('Conectado a MongoDB...'))
-    .catch(err => console.error('No se pudo conectar con MongoDB:', err));
+
+// Llamar a la función para conectar a MongoDB Atlas
+connectDB();
 
 // Inicializar la aplicación Express
 const app = express();
