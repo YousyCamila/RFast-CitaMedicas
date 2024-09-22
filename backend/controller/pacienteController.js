@@ -20,9 +20,9 @@ const crearPaciente = async (req, res) => {
   const { error, value } = pacienteSchemaValidation.validate({
     nombre: body.nombre,
     fechaNacimiento: body.fechaNacimiento,
-    teléfono: body.telefono,
+    telefono: body.telefono,
     email: body.email,
-    dirección: body.direccion,
+    direccion: body.direccion,
   });
 
   if (error) {

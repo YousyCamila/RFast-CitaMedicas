@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const doctorsController = require('../controller/doctorController');
+const doctorController = require('../controller/doctorController');
 
 // Crear un nuevo doctor
 /**
  * @swagger
- * /doctors:
+ * /doctores:
  *   post:
  *     summary: Crear un nuevo doctor
  *     tags: ["Doctores"]
@@ -56,12 +56,12 @@ const doctorsController = require('../controller/doctorController');
  */
 
  
-router.post('/', doctorsController.crearDoctor);
+router.post('/', doctorController.crearDoctor);
 
 // Obtener todos los doctores
 /**
  * @swagger
- * /doctors:
+ * /doctores:
  *   get:
  *     summary: Obtener todos los doctores
  *     tags: ["Doctores"]
@@ -99,12 +99,12 @@ router.post('/', doctorsController.crearDoctor);
  *       500:
  *         description: Error del servidor
  */
-router.get('/', doctorsController.listarDoctores);
+router.get('/', doctorController.listarDoctores);
 
 // Obtener un doctor por email
 /**
  * @swagger
- * /doctors/{email}:
+ * /doctores/{email}:
  *   get:
  *     summary: Obtener un doctor por email
  *     tags: ["Doctores"]
@@ -140,12 +140,12 @@ router.get('/', doctorsController.listarDoctores);
  *       500:
  *         description: Error del servidor
  */
-router.get('/:email', doctorsController.obtenerDoctorPorEmail);
+router.get('/:email', doctorController.obtenerDoctorPorEmail);
 
 // Actualizar un doctor por email
 /**
  * @swagger
- * /doctors/{email}:
+ * /doctores/{email}:
  *   put:
  *     summary: Actualizar un doctor por email
  *     tags: ["Doctores"]
@@ -202,12 +202,12 @@ router.get('/:email', doctorsController.obtenerDoctorPorEmail);
  *       500:
  *         description: Error del servidor
  */
-router.put('/:email', doctorsController.actualizarDoctor);
+router.put('/:email', doctorController.actualizarDoctor);
 
 // Eliminar un doctor por email
 /**
  * @swagger
- * /doctors/{email}:
+ * /doctores/{email}:
  *   delete:
  *     summary: Eliminar un doctor por email
  *     tags: ["Doctores"]
@@ -226,7 +226,7 @@ router.put('/:email', doctorsController.actualizarDoctor);
  *       500:
  *         description: Error del servidor
  */
-router.delete('/:email', doctorsController.eliminarDoctor);
+router.delete('/:email', doctorController.eliminarDoctor);
 
 module.exports = router;
 
