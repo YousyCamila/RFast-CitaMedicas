@@ -1,69 +1,98 @@
-const Cita = require('../models/citaModels');
+const logic = require('../logic/citaLogic'); // Asegúrate de que la ruta sea correcta
+const { citaSchemaValidation } = require('../validations/citaValidations'); // Suponiendo que tienes un esquema de validación
 
-// Crear una nueva cita
-exports.createCita = async (req, res) => {
-  try {
-    const cita = new Cita(req.body);
-    await cita.save();
-    res.status(201).json(cita);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
-
-// Obtener todas las citas
-exports.getCitas = async (req, res) => {
-  try {
-    const citas = await Cita.find().populate('medico usuario');
-    res.json(citas);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// Obtener una cita por ID
-exports.getCitaById = async (req, res) => {
-  try {
-    const cita = await Cita.findById(req.params.id).populate('medico usuario');
-    if (cita) {
-      res.json(cita);
-    } else {
-      res.status(404).json({ message: 'Cita no encontrada' });
+// Controlador para listar todas las citas
+const listarCitas = async (req, res) => {
+    try {
+        const citas = await logic.obtenerCitas();
+        if (citas.length === 0) {
+            return res.status(204).send(); // 204 No Content
+        }
+        res.json(citas);
+    } catch (err) {
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
 };
 
-// Actualizar una cita por ID
-exports.updateCita = async (req, res) => {
-  try {
-    const cita = await Cita.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    ).populate('medico usuario');
-    if (cita) {
-      res.json(cita);
-    } else {
-      res.status(404).json({ message: 'Cita no encontrada' });
+// Controlador para crear una nueva cita
+const crearCita = async (req, res) => {
+    const body = req.body;
+    const { error, value } = citaSchemaValidation.validate({
+        fecha: body.fecha,
+        hora: body.hora,
+        paciente: body.paciente,
+        doctor: body.doctor,
+        motivo: body.motivo,
+        estado: body.estado,
+    });
+
+    if (error) {
+        return res.status(400).json({ error: error.details[0].message });
     }
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
 
-// Eliminar una cita por ID
-exports.deleteCita = async (req, res) => {
-  try {
-    const cita = await Cita.findByIdAndDelete(req.params.id);
-    if (cita) {
-      res.json({ message: 'Cita eliminada' });
-    } else {
-      res.status(404).json({ message: 'Cita no encontrada' });
+    try {
+        const nuevaCita = await logic.crearCita(value);
+        res.status(201).json(nuevaCita);
+    } catch (err) {
+        if (err.message === 'Ya existe una cita en esta fecha y hora para el paciente y doctor especificados.') {
+            return res.status(409).json({ error: err.message });
+        }
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
 };
 
+// Controlador para obtener una cita por ID
+const obtenerCitaPorId = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const cita = await logic.obtenerCitaPorId(id);
+        res.json(cita);
+    } catch (err) {
+        res.status(404).json({ error: err.message });
+    }
+};
+
+// Controlador para actualizar una cita por ID
+const actualizarCita = async (req, res) => {
+    const { id } = req.params;
+    const body = req.body;
+    const { error, value } = citaSchemaValidation.validate({
+        fecha: body.fecha,
+        hora: body.hora,
+        paciente: body.paciente,
+        doctor: body.doctor,
+        motivo: body.motivo,
+        estado: body.estado,
+    });
+
+    if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+    }
+
+    try {
+        const citaActualizada = await logic.actualizarCita(id, value);
+        res.json(citaActualizada);
+    } catch (err) {
+        res.status(404).json({ error: err.message });
+    }
+};
+
+// Controlador para eliminar una cita por ID
+const eliminarCita = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await logic.eliminarCita(id);
+        res.json(result);
+    } catch (err) {
+        res.status(404).json({ error: err.message });
+    }
+};
+
+// Exportar los controladores
+module.exports = {
+    listarCitas,
+    crearCita,
+    obtenerCitaPorId,
+    actualizarCita,
+    eliminarCita,
+};
